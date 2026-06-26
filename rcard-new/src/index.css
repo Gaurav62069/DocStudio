@@ -1,0 +1,101 @@
+/* index.css — Government Portal Design Tokens */
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@theme {
+  /* ── Core Brand Colors ─────────────────────────────── */
+  --color-gov-blue: #1a56a8; /* Primary — header, buttons, accents  */
+  --color-gov-blue-dark: #154496; /* Hover state                          */
+  --color-gov-blue-light: #4a6fa5; /* Labels, secondary text               */
+  --color-gov-blue-pale: #ebf0ff; /* Hover bg, tag bg                     */
+
+  /* ── Surface Colors ────────────────────────────────── */
+  --color-page-bg: #f0f4fb; /* Outer canvas / preview bg            */
+  --color-sidebar-bg: #ffffff; /* Sidebar background                   */
+  --color-card-bg: #ffffff; /* Card / panel background              */
+  --color-field-bg: #ffffff; /* Input background                     */
+  --color-section-bg: #f8faff; /* Member row / sub-section tint        */
+
+  /* ── Border ────────────────────────────────────────── */
+  --color-border: #d0dcf0; /* Default border on inputs / dividers  */
+  --color-border-strong: #a8c0e8; /* Dashed upload box                    */
+
+  /* ── Text ──────────────────────────────────────────── */
+  --color-text-primary: #1e2a3b; /* Main body text                       */
+  --color-text-secondary: #4a6fa5; /* Labels, hints                        */
+  --color-text-muted: #94a3b8; /* Placeholder, disabled text           */
+
+  /* ── Status Colors ─────────────────────────────────── */
+  --color-success-bg: #f0fdf4;
+  --color-success-text: #166534;
+  --color-success-border: #bbf7d0;
+
+  --color-error-bg: #fff1f2;
+  --color-error-text: #b91c1c;
+  --color-error-border: #fecdd3;
+
+  /* ── Shadows ───────────────────────────────────────── */
+  --shadow-sidebar: 4px 0 24px rgba(26, 86, 168, 0.07);
+  --shadow-topbar: 0 1px 6px rgba(26, 86, 168, 0.06);
+  --shadow-btn: 0 2px 6px rgba(26, 86, 168, 0.25);
+
+  /* ── Typography ────────────────────────────────────── */
+  --font-ui: "Inter", system-ui, sans-serif;
+  --font-hindi: "Noto Serif Devanagari", serif;
+}
+
+/* ── Base reset ──────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--color-page-bg);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Hindi text uses Noto Serif Devanagari ───────────── */
+[lang="hi"],
+.hindi-text {
+  font-family: var(--font-hindi);
+}
+
+/* ── Custom scrollbar (sidebar form) ────────────────── */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gov-blue-light);
+}
+
+/* ── react-transliterate dropdown fix ───────────────── */
+.react-transliterate-container {
+  display: block !important;
+  width: 100% !important;
+}
+.react-transliterate-container ul {
+  z-index: 9999 !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(26, 86, 168, 0.12) !important;
+  background: white !important;
+  font-size: 13px !important;
+}
+.react-transliterate-container ul li:hover {
+  background-color: var(--color-gov-blue-pale) !important;
+  color: var(--color-gov-blue) !important;
+}
