@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
-import scrapeRoutes from "./routes/scrape.routes.js";
+import extractRoutes from "./routes/extract.routes.js";
 import dns from "dns";
 // Environment variables load karna
 dotenv.config();
@@ -18,7 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // JSON data read karne ke liye
 app.use("/api/auth", authRoutes);
-app.use("/api/data", scrapeRoutes);
+app.use("/api/data", extractRoutes);
 // Test Route
 app.get("/", (req, res) => {
   res.send("RCard Backend is Running!");

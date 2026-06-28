@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ReactTransliterate } from "react-transliterate";
 import "react-transliterate/dist/index.css";
 
-// ── Shared classes ──────────────────────────────────────────────────────────
 export const inputCls =
   "w-full px-3 py-[9px] text-sm rounded-lg border border-[#D0DCF0] bg-white text-gray-800 " +
   "focus:outline-none focus:ring-2 focus:ring-[#1A56A8]/30 focus:border-[#1A56A8] " +
@@ -15,7 +14,6 @@ export const selectCls =
   "focus:outline-none focus:ring-2 focus:ring-[#1A56A8]/30 focus:border-[#1A56A8] " +
   "transition-all duration-200 appearance-none shadow-sm cursor-pointer hover:border-[#A8C0E8] hover:shadow-md";
 
-// ── Small UI atoms ──────────────────────────────────────────────────────────
 const FieldLabel = ({ children }) => (
   <label className="block text-[10px] font-bold text-[#4A6FA5] uppercase tracking-[0.14em] mb-1.5 select-none">
     {children}
@@ -41,7 +39,22 @@ const SelectWrapper = ({ children }) => (
   </div>
 );
 
-// ── Main SidebarForm ────────────────────────────────────────────────────────
+const RELATIONS = [
+  "मुखिया",
+  "स्वयं",
+  "पति",
+  "बेटा",
+  "बेटी",
+  "सास",
+  "ससुर",
+  "पोता",
+  "पोती",
+  "बहू",
+  "माँ",
+  "बहन",
+  "अन्य",
+];
+
 export default function SidebarForm({
   formData,
   setFormData,
@@ -81,24 +94,6 @@ export default function SidebarForm({
   const handleClearMembers = () =>
     setFormData((p) => ({ ...p, membersCount: 1, additionalMembers: [] }));
 
-  const handleScrape = async () => {
-    if (!formData.rcNumber)
-      return setMessage({ text: "Pehle Card Number daalo!", type: "error" });
-    setLoading(true);
-    setMessage({ text: "", type: "" });
-    try {
-      const r = await axios.post("http://localhost:5000/api/data/scrape", {
-        rcNumber: formData.rcNumber,
-      });
-      setFormData((p) => ({ ...p, ...r.data }));
-      setMessage({ text: "Data Fetched Successfully!", type: "success" });
-    } catch {
-      setMessage({ text: "Scraping fail ho gayi.", type: "error" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handlePdfUpload = async () => {
     if (!pdfFile)
       return setMessage({ text: "Pehle PDF select karo!", type: "error" });
@@ -107,9 +102,11 @@ export default function SidebarForm({
     const fd = new FormData();
     fd.append("pdfFile", pdfFile);
     try {
-      const r = await axios.post("http://localhost:5000/api/data/upload", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const r = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/data/upload`,
+        fd,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
       setFormData((p) => ({ ...p, ...r.data }));
       setMessage({
         text: "PDF Extract & Auto-fill Successful!",
@@ -122,22 +119,6 @@ export default function SidebarForm({
     }
   };
 
-  const RELATIONS = [
-    "मुखिया",
-    "स्वयं",
-    "पति",
-    "बेटा",
-    "बेटी",
-    "सास",
-    "ससुर",
-    "पोता",
-    "पोती",
-    "बहू",
-    "माँ",
-    "बहन",
-    "अन्य",
-  ];
-
   return (
     <aside
       className="hide-on-print flex flex-col h-screen sticky top-0 bg-white border-r border-[#D4E0F5]"
@@ -147,7 +128,7 @@ export default function SidebarForm({
         boxShadow: "6px 0 32px rgba(26,86,168,0.09)",
       }}
     >
-      {/* ── Header ── */}
+      {/* Header */}
       <div
         className="flex-shrink-0 px-6 py-4"
         style={{
@@ -169,7 +150,7 @@ export default function SidebarForm({
         </div>
       </div>
 
-      {/* ── Status Message ── */}
+      {/* Status Message */}
       {message.text && (
         <div
           className={`mx-5 mt-3 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 flex-shrink-0 border ${
@@ -185,59 +166,35 @@ export default function SidebarForm({
         </div>
       )}
 
-      {/* ── Data Import ── */}
-      <div className="px-5 pt-4 pb-4 border-b border-[#EEF2FA] flex-shrink-0 space-y-3">
-        <p className="text-[9.5px] font-extrabold text-[#4A6FA5] uppercase tracking-[0.16em] mb-2">
-          डेटा आयात करें
+      {/* PDF Upload only */}
+      <div className="px-5 pt-4 pb-4 border-b border-[#EEF2FA] flex-shrink-0">
+        <p className="text-[9.5px] font-extrabold text-[#4A6FA5] uppercase tracking-[0.16em] mb-3">
+          PDF से Auto-fill करें
         </p>
-
-        <div>
-          <FieldLabel>PDF अपलोड</FieldLabel>
-          <div className="flex gap-2">
-            <label className="flex-1 cursor-pointer group">
-              <div className="px-3 py-[9px] text-xs rounded-lg border border-dashed border-[#A8C0E8] bg-[#F5F8FF] text-[#4A6FA5] group-hover:bg-[#EBF0FF] group-hover:border-[#1A56A8] transition-all duration-200 text-center truncate select-none">
-                {pdfFile ? `📄 ${pdfFile.name}` : "📄 फ़ाइल चुनें..."}
-              </div>
-              <input
-                type="file"
-                accept=".pdf"
-                className="hidden"
-                onChange={(e) => setPdfFile(e.target.files[0])}
-              />
-            </label>
-            <button
-              onClick={handlePdfUpload}
-              disabled={loading}
-              className="px-4 py-[9px] text-xs rounded-lg bg-[#1A56A8] text-white font-bold hover:bg-[#154496] active:scale-95 transition-all duration-150 shadow-sm disabled:opacity-50 whitespace-nowrap"
-            >
-              {loading ? "..." : "Extract"}
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <FieldLabel>कार्ड नंबर से Fetch</FieldLabel>
-          <div className="flex gap-2">
+        <FieldLabel>PDF अपलोड</FieldLabel>
+        <div className="flex gap-2">
+          <label className="flex-1 cursor-pointer group">
+            <div className="px-3 py-[9px] text-xs rounded-lg border border-dashed border-[#A8C0E8] bg-[#F5F8FF] text-[#4A6FA5] group-hover:bg-[#EBF0FF] group-hover:border-[#1A56A8] transition-all duration-200 text-center truncate select-none">
+              {pdfFile ? `📄 ${pdfFile.name}` : "📄 फ़ाइल चुनें..."}
+            </div>
             <input
-              type="text"
-              name="rcNumber"
-              value={formData.rcNumber}
-              onChange={handleChange}
-              placeholder="Card Number..."
-              className={`${inputCls} flex-1`}
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={(e) => setPdfFile(e.target.files[0])}
             />
-            <button
-              onClick={handleScrape}
-              disabled={loading}
-              className="px-4 py-[9px] text-xs rounded-lg border-2 border-[#1A56A8] text-[#1A56A8] font-bold hover:bg-[#EBF0FF] active:scale-95 transition-all duration-150 disabled:opacity-50 whitespace-nowrap"
-            >
-              Fetch
-            </button>
-          </div>
+          </label>
+          <button
+            onClick={handlePdfUpload}
+            disabled={loading}
+            className="px-4 py-[9px] text-xs rounded-lg bg-[#1A56A8] text-white font-bold hover:bg-[#154496] active:scale-95 transition-all duration-150 shadow-sm disabled:opacity-50 whitespace-nowrap"
+          >
+            {loading ? "⏳..." : "Extract"}
+          </button>
         </div>
       </div>
 
-      {/* ── Scrollable Form Fields ── */}
+      {/* Scrollable Form */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
         {/* § कार्डधारक */}
         <div>
@@ -517,7 +474,7 @@ export default function SidebarForm({
         </div>
       </div>
 
-      {/* ── Print Buttons ── */}
+      {/* Print Buttons */}
       <div
         className="flex-shrink-0 px-5 py-4 bg-white flex gap-3"
         style={{

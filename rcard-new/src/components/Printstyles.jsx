@@ -1,5 +1,4 @@
 // src/components/card/PrintStyles.jsx
-
 export default function PrintStyles({ cardBg }) {
   return (
     <style>{`
@@ -24,7 +23,14 @@ export default function PrintStyles({ cardBg }) {
           justify-content: flex-start !important;
           align-items: center !important;
           box-sizing: border-box !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+        /* Purana wala jo kaam kar raha tha — exactly same */
+        .print-area.colored-bg {
           background-color: ${cardBg} !important;
+          height: 54% !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
         }
